@@ -1,0 +1,24 @@
+{
+  "name": "mini-draw-something-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:PacersCyc/mini-draw-something-server.git",
+  "author": "PacersCyc <452720855@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node src/index.js",
+    "build": "babel src --out-dir dist",
+    "serve": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/node": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "koa": "^2.11.0",
+    "socket.io": "^2.3.0"
+  }
+}
