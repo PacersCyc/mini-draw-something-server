@@ -13,6 +13,8 @@ let generateRoomId = () => {
   let d = new Date()
   return parseInt('' + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds())
 }
+// socket 房间id
+let count = 0
 
 // 在线玩家
 let onlineUsers = {}
@@ -106,8 +108,10 @@ let handleConnect = (socket, baseInfo) => {
   socket.on('createRoom', data => {
     console.log(data)
     let roomId = generateRoomId()
+    let socketRoom = 'room ' + (++count)
     let newRoom = {
       id: roomId,
+      socketRoom,
       name: data.roomName,
       status: 0,
       type: data.roomType,
@@ -117,6 +121,10 @@ let handleConnect = (socket, baseInfo) => {
     }
     roomData[roomId] = newRoom
 
+    socket.join(socketRoom, () => {
+      console.log(`${roomData[roomId].master.username}进入房间${socketRoom}`)
+    })
+
     io.emit('homeInfo', getHomeInfo())
     socket.emit('enterRoom', roomData[roomId])
   })
@@ -125,10 +133,15 @@ let handleConnect = (socket, baseInfo) => {
     console.log(data)
     const {
       roomId,
+      socketRoom,
       player
     } = data
     let formalPlayers = roomData[roomId].players
     roomData[roomId].players = formalPlayers.concat(player)
+
+    socket.join(socketRoom, () => {
+      console.log(`${player.username}进入房间${socketRoom}`)
+    })
 
     // 更新房间信息
     socket.emit('updateRoomInfo', roomData[roomId])
@@ -140,6 +153,7 @@ let handleConnect = (socket, baseInfo) => {
     console.log(data)
     const {
       roomId,
+      socketRoom,
       player
     } = data
     let formalPlayers = roomData[roomId].players
@@ -154,7 +168,20 @@ let handleConnect = (socket, baseInfo) => {
       }
     }
 
+    socket.leave(socketRoom, () => {
+      console.log(`${player.username}离开了房间${socketRoom}`)
+    })
+
     updateAllHomeInfo()
+  })
+
+  socket.on('chatMessage', data => {
+    const {msg, player} = data
+    console.log(msg)
+    console.log(socket.rooms)
+    // 获取房间名
+    let socketRoom = Object.keys(socket.rooms)[1]
+    io.to(socketRoom).emit('chatMessage', data)
   })
 
   socket.on('disconnect', () => {
