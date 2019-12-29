@@ -3,6 +3,7 @@ import http from 'http'
 import Koa from 'koa'
 import socketIo from 'socket.io'
 import uuid from 'uuid/v4'
+import { getNextKey } from './data'
 
 const PORT = 9000
 const app = new Koa()
@@ -44,17 +45,23 @@ let roomData = {
   // }
 }
 
+let gameData = {}
+
 let baseInfo = {
   onlineUsers,
-  roomData
+  roomData,
+  gameData
 }
 
 let handleConnect = (socket, baseInfo) => {
   console.log('user comes in', socket.id)
   console.log(socket.rooms)
+
+  let clientId = socket.id
   let {
     onlineUsers,
-    roomData
+    roomData,
+    gameData
   } = baseInfo
 
   const getHomeInfo = () => ({
@@ -74,6 +81,15 @@ let handleConnect = (socket, baseInfo) => {
   console.log(onlineCount)
 
   updateAllHomeInfo()
+
+  socket.on('login', data => {
+    console.log(data)
+
+    onlineUsers[clientId] = {
+      ...data,
+      clientId
+    }
+  })
 
   socket.on('updateHome', () => {
     updateHomeInfo()
@@ -115,8 +131,12 @@ let handleConnect = (socket, baseInfo) => {
       name: data.roomName,
       status: 0,
       type: data.roomType,
-      master: data.master,
-      players: [data.master],
+      master: {...data.master, clientId},
+      players: [{...data.master, clientId}].map(p => ({
+        ...p,
+        status: 0,  // 表示玩家在房间内状态 0:准备中 1:游戏中 
+      })),
+      playTimers: 3,
       playersCount: 1
     }
     roomData[roomId] = newRoom
@@ -137,7 +157,9 @@ let handleConnect = (socket, baseInfo) => {
       player
     } = data
     let formalPlayers = roomData[roomId].players
-    roomData[roomId].players = formalPlayers.concat(player)
+    roomData[roomId].players = formalPlayers.concat({...player, clientId}).map(p => ({...p, status: 0}))
+    roomData[roomId].playersCount ++
+    // roomData[roomId].playTimers += 2
 
     socket.join(socketRoom, () => {
       console.log(`${player.username}进入房间${socketRoom}`)
@@ -184,8 +206,53 @@ let handleConnect = (socket, baseInfo) => {
     io.to(socketRoom).emit('chatMessage', data)
   })
 
+  socket.on('startGame', data => {
+    console.log(data)
+    const { socketRoom, id, players } = data
+    let gameKey = getNextKey()
+
+    roomData[id].status = 1
+    gameData[id] = {
+      players,
+      userScore: {},
+      playInfo: {
+        key: gameKey,
+        painter: players[0],
+        gameTime: 60
+      }
+    }
+
+    players.forEach(p => {
+      let gameInfo = {
+        players,
+        key: null,
+        isPainter: false,
+        gameTime: 60
+      }
+      if (p.clientId === gameData[id].playInfo.painter.clientId) {
+        gameInfo.key = gameKey[0]
+        gameInfo.isPainter = true
+      } else {
+        gameInfo.key = `${gameKey[0].length}个字 ${gameKey[1]}`
+      }
+      io.sockets.connected[p.clientId].emit('startGame', gameInfo)
+    })
+
+    updateAllHomeInfo()
+  })
+
+  socket.on('imageData', data => {
+    console.log(data)
+    console.log(socket.rooms)
+    let socketRoom = Object.keys(socket.rooms)[1]
+
+    socket.broadcast.to(socketRoom).emit('imageData', data)
+  })
+
   socket.on('disconnect', () => {
     console.log('disconnect!')
+    delete onlineUsers[clientId]
+    console.log(onlineUsers)
     onlineCount--
     updateAllHomeInfo()
   })
