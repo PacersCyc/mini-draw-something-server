@@ -148,10 +148,7 @@ const countCurrentRound = (currentGame, io) => {
 
 // 判断游戏是否结束或开始下一轮
 const gameOverOrNext = (currentGame, roomData, io, updateAllHomeInfo) => {
-  console.log(currentGame.playTimes)
-  console.log('-----------')
-  console.log(updateAllHomeInfo)
-  console.log('-----------')
+  // console.log(currentGame.playTimes)
   if (currentGame.playTimes >= currentGame.totalTimes || getOnlinePlayersInGame(currentGame).length < 2) {
     // 游戏结束
     let overData = {
@@ -209,10 +206,10 @@ const timeCountDown = (currentGame, roomData, io, updateAllHomeInfo) => {
 
 // 掉线更新相关房间信息
 const updateRelatedRoomInfo = (roomData, id, leftPlayer) => {
-  console.log(leftPlayer)
+  // console.log(leftPlayer)
   let room = roomData[id]
   let { playersCount } = room
-  console.log(playersCount)
+  // console.log(playersCount)
   if (playersCount <= 1) {
     delete roomData[id] // 没人了删除房间
   } else {
@@ -221,14 +218,14 @@ const updateRelatedRoomInfo = (roomData, id, leftPlayer) => {
     if (room.master.uid === leftPlayer.uid) {
       room.master = room.players[0]
     }
-    console.log(room)
+    // console.log(room)
   }
 }
 
 // 掉线更新相关游戏信息
 const updateRelatedGameInfo = (gameData, roomData, id, leftPlayer, io, updateAllHomeInfo)  => {
   let game = gameData[id]
-  console.log(game)
+  // console.log(game)
   // 更改玩家在线状态
   let gPlayer = game.players.find(p => p.uid === leftPlayer.uid)
   gPlayer.status = 1

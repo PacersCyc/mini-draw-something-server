@@ -8,10 +8,10 @@ const {
 } = service
 
 export default function gameReceiveAnswerHandle(data, roomData, gameData, io, updateAllHomeInfo) {
-  console.log(data)
+  // console.log(data)
   const { gameId, answer, answerer } = data
 
-  console.log(gameData[gameId])
+  // console.log(gameData[gameId])
   let msg
   let currentGame = gameData[gameId]
   const { playInfo, userScore } = currentGame

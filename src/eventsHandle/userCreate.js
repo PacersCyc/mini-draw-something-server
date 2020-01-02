@@ -1,7 +1,7 @@
 import uuid from 'uuid/v4'
 
 export default function userCreate(data, socket, onlineUsers) {
-  console.log(data)
+  // console.log(data)
   let clientId = socket.id
   let uid = uuid()
   onlineUsers[clientId] = {

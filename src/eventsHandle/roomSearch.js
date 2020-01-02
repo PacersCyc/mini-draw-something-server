@@ -1,5 +1,5 @@
 export default function roomSearchHandle(data, socket, roomData, onlineUsers, updateAllHomeInfo) {
-  console.log(data)
+  // console.log(data)
   let clientId = socket.id
   const { roomId, player } = data
 

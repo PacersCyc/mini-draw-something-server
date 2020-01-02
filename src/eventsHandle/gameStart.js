@@ -7,9 +7,7 @@ const {
 } = service
 
 export default function gameStartHandle(data, roomData, gameData, socket, io, updateAllHomeInfo) {
-  console.log(data)
-  console.log('start!')
-  console.log(updateAllHomeInfo)
+  // console.log(data)
   const { socketRoom, id, players } = data
   if (players.length < 2 || roomData[id].status !== 0) {
     console.log('无法开始游戏')

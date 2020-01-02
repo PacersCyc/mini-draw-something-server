@@ -8,10 +8,10 @@ export default function clientDisconnectHandle(socket, io, gameData, roomData, o
   console.log('disconnect!')
   let clientId = socket.id
   let leftPlayer = onlineUsers[clientId]
-  console.log(leftPlayer)
+  // console.log(leftPlayer)
   if (leftPlayer) {
     let roomId = leftPlayer.currentRoom
-    console.log(roomId)
+    // console.log(roomId)
     if (roomId) {
       let room = roomData[roomId]
       if (room && room.status === 1) { // 在游戏中则更新游戏信息
@@ -22,7 +22,7 @@ export default function clientDisconnectHandle(socket, io, gameData, roomData, o
   }
 
   delete onlineUsers[clientId]
-  console.log(onlineUsers)
+  // console.log(onlineUsers)
   baseInfo.onlineCount--
 
   updateAllHomeInfo()

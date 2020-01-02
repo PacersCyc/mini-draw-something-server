@@ -1,5 +1,5 @@
 export default function roomEnterHandle(data, socket, roomData, onlineUsers, updateAllHomeInfo) {
-  console.log(data)
+  // console.log(data)
   let clientId = socket.id
   const {
     roomId,
@@ -11,7 +11,7 @@ export default function roomEnterHandle(data, socket, roomData, onlineUsers, upd
   roomData[roomId].playersCount++
   onlineUsers[clientId].currentRoom = roomId
   // roomData[roomId].playTimers += 2
-  console.log(onlineUsers[clientId])
+  // console.log(onlineUsers[clientId])
 
   socket.join(socketRoom, () => {
     console.log(`${player.username}进入房间${socketRoom}...`)

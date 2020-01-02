@@ -4,7 +4,7 @@ const generateRoomId = () => {
 }
 
 export default function roomCreateHandle(data, socket, io, roomData, onlineUsers, count, getHomeInfo) {
-  console.log(data)
+  // console.log(data)
   let clientId = socket.id
   let roomId = generateRoomId()
   let socketRoom = 'room ' + (++count)
@@ -24,7 +24,7 @@ export default function roomCreateHandle(data, socket, io, roomData, onlineUsers
   }
   roomData[roomId] = newRoom
   onlineUsers[clientId].currentRoom = roomId
-  console.log(onlineUsers[clientId])
+  // console.log(onlineUsers[clientId])
 
   socket.join(socketRoom, () => {
     console.log(`${roomData[roomId].master.username}进入房间${socketRoom}`)

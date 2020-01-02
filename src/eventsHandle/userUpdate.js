@@ -1,5 +1,5 @@
 export default function userUpdate(data, socket, onlineUsers) {
-  console.log(data)
+  // console.log(data)
   let clientId = socket.id
   const { uid, name } = data
 

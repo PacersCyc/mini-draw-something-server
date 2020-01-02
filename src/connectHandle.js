@@ -14,7 +14,7 @@ import clientDisconnectHandle from './eventsHandle/clientDisconnect'
 
 const connectHandle = (socket, baseInfo, io, count) => {
   console.log('user comes in', socket.id)
-  console.log(socket.rooms)
+  // console.log(socket.rooms)
 
   let clientId = socket.id
   let {
